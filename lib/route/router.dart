@@ -299,6 +299,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //   return MaterialPageRoute(
     //     builder: (context) => const ThanksForOrderScreen(),
     //   );
+    // Admin Routes
+    case adminLoginRoute:
+      return MaterialPageRoute(
+        builder: (context) => const AdminLoginScreen(),
+      );
+    case adminDashboardRoute:
+      return MaterialPageRoute(
+        builder: (context) => const AdminDashboard(),
+      );
     default:
       return MaterialPageRoute(
         // Make a screen for undefine

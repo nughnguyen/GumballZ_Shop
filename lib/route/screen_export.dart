@@ -26,3 +26,7 @@ export '/screens/wallet/views/empty_wallet_screen.dart';
 export '/screens/wallet/views/wallet_screen.dart';
 export '/screens/profile/views/profile_screen.dart';
 export '/screens/user_info/views/user_info_screen.dart';
+
+// Admin Screens
+export '/screens/admin/admin_login_screen.dart';
+export '/screens/admin/admin_dashboard.dart';

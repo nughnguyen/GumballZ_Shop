@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/providers/admin_auth_provider.dart';
 import 'package:shop/providers/cart_provider.dart';
 import 'package:shop/providers/category_provider.dart';
 import 'package:shop/providers/product_provider.dart';
@@ -20,6 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => AdminAuthProvider()),
       ],
       child: const MyApp(),
     ),
@@ -37,14 +39,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late String _initialRoute;
+
   @override
   void initState() {
     super.initState();
-    // Initialize product and category streams after widget tree is built
+    
+    // Check admin status and initialize streams
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final adminProvider = Provider.of<AdminAuthProvider>(context, listen: false);
       final productProvider = Provider.of<ProductProvider>(context, listen: false);
       final categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
       
+      // Check if admin is already logged in
+      adminProvider.checkAdminStatus();
+      
+      // Initialize product and category streams
       productProvider.initializeProductStreams();
       categoryProvider.initializeCategoryStream();
     });
@@ -52,14 +62,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'GumballZ Shop',
-      theme: AppTheme.lightTheme(context),
-      // Dark theme is inclided in the Full template
-      themeMode: ThemeMode.light,
-      onGenerateRoute: router.generateRoute,
-      initialRoute: entryPointScreenRoute,
+    return Consumer<AdminAuthProvider>(
+      builder: (context, adminProvider, _) {
+        // Determine initial route based on admin authentication
+        String initialRoute = adminProvider.isAuthenticated 
+            ? adminDashboardRoute 
+            : entryPointScreenRoute;
+        
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'GumballZ Shop',
+          theme: AppTheme.lightTheme(context),
+          themeMode: ThemeMode.light,
+          onGenerateRoute: router.generateRoute,
+          initialRoute: initialRoute,
+        );
+      },
     );
   }
 }
